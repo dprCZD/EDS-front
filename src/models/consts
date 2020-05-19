@@ -1,0 +1,11 @@
+
+
+export const userId="userId";
+
+export const userCity="userCity";
+
+export const userDistrict="district";
+
+export const userGrid="grid";
+
+

@@ -49,6 +49,12 @@ export default defineConfig({
               redirect: '/sitedata',
             },
             {
+              name: '个人信息',
+              icon: 'smile',
+              path: '/account/accountsettings',
+              component: './user/AccountSettings',
+            },
+            {
               name: '局站信息',
               icon: 'smile',
               path: '/sitedata',
@@ -73,6 +79,12 @@ export default defineConfig({
               component: './BenchmarkAnalysis',
             },
             {
+              name: '查询表格',
+              icon: 'smile',
+              path: '/accounttask',
+              component: './accounttask',
+            },
+            {
               component: './404',
             },
           ],
@@ -94,11 +106,11 @@ export default defineConfig({
   // @ts-ignore
   title: false,
   ignoreMomentLocale: true,
-  proxy:{
-    '/api/':{
-      target:'http://localhost:8080/',
-      changeOrigin:true,
-    }
+  proxy: {
+    '/api/': {
+      target: 'http://localhost:8080/',
+      changeOrigin: true,
+    },
   },
   manifest: {
     basePath: '/',

@@ -35,7 +35,7 @@ class AvatarDropdown extends React.Component {
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
 
-          <Menu.Item key="center">
+          <Menu.Item key="accountsettings">
             <UserOutlined />
             个人中心
           </Menu.Item>

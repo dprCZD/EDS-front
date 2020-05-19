@@ -1,6 +1,6 @@
 import { stringify } from 'querystring';
 import { history } from 'umi';
-import { accountLogin } from '@/services/login';
+import { accountLogin,accountLogout,queryCurrent } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -11,15 +11,16 @@ const authorityMap = {
 const Model = {
   namespace: 'login',
   state: {
-    currentUser:[],
+    currentUser:{},
   },
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: response.data,
       }); // Login successfully
+      sessionStorage.setItem("userId",response.data.id);
 
       const urlParams = new URL(window.location.href);
       const params = getPageQuery();
@@ -42,8 +43,22 @@ const Model = {
       history.replace(redirect || '/');
     },
 
-    logout() {
+    *queryCurrent( _,{ call, put }) {
+      const response = yield call(queryCurrent);
+      yield put({
+        type: 'saveCurrentUser',
+        payload:response==null?null:response.data,
+      });
+    },
+
+    *logout( _,{ call, put }) {
+
+      yield call(accountLogout);
+      yield put({
+        type: 'removeLoginStatus',
+      });
       const { redirect } = getPageQuery(); // Note: There may be security issues, please note
+      sessionStorage.removeItem("userId");
 
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
@@ -57,8 +72,19 @@ const Model = {
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(authorityMap[payload.authority]);
+      const authority=authorityMap[payload.authority];
+      setAuthority(authority);
       return { ...state, currentUser: payload};
+    },
+
+    saveCurrentUser(state, { payload }){
+
+      return { ...state, currentUser: payload};
+    },
+
+    removeLoginStatus(state) {
+      setAuthority(undefined);
+      return { ...state,currentUser:undefined};
     },
   },
 };
