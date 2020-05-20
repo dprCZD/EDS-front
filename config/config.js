@@ -46,7 +46,7 @@ export default defineConfig({
           routes: [
             {
               path: '/',
-              redirect: '/sitedata',
+              redirect: '/accounttask',
             },
             {
               name: '个人信息',
@@ -55,34 +55,30 @@ export default defineConfig({
               component: './user/AccountSettings',
             },
             {
-              name: '局站信息',
+              name: '用户管理',
               icon: 'smile',
-              path: '/sitedata',
-              component: './SiteData',
+              path: '/account/accountmanage',
+              component: './user/accountmanage',
+              authority: ['admin'],
+
             },
             {
-              name: '数据录入',
+              name: '系统任务',
               icon: 'smile',
-              path: '/dataentry',
-              component: './DataEntry',
+              path: '/accounttask',
+              component: './accounttask',
             },
             {
-              name: '电费电量',
+              name: '局站基础信息',
               icon: 'smile',
-              path: '/electricityfee',
-              component: './ElectricityFee',
-            },
-            {
-              name: '标杆生成',
-              icon: 'smile',
-              path: '/benchmarkanalysis',
-              component: './BenchmarkAnalysis',
+              path: '/basesite',
+              component: './basesite',
             },
             {
               name: '查询表格',
               icon: 'smile',
-              path: '/accounttask',
-              component: './accounttask',
+              path: '/electricityfee',
+              component: './electricityfee',
             },
             {
               component: './404',

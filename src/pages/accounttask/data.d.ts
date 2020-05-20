@@ -3,8 +3,8 @@ export interface TableListItem {
   name: string;
   operatorId: string;
   operatorName: string;
-  type: string;
-  status: string;
+  type: number;
+  status: number;
   progress: string;
   gmtCreate:Date,
   gmtModify:Date,
@@ -28,6 +28,7 @@ export interface TableListData {
 }
 
 export interface TableListParams {
+  id:string;
   name: string;
   operatorId: string;
   operatorName: string;

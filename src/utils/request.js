@@ -72,7 +72,6 @@ request.interceptors.response.use(response=> {
         description:`错误信息:${data.message}`,
       });
     }
-    console.log("success request.js");
     return data;
   });
 });

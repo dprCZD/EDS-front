@@ -1,20 +1,22 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Dropdown, Menu, message } from 'antd';
+import {  Divider,} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
-import CreateForm from './components/CreateForm';
-import UpdateForm, { FormValueType } from './components/UpdateForm';
 import { TableListItem } from './data.d';
 import { queryRule} from './service';
-import { downloadExcel }from'@/services/download'
 import {downloadUrl} from "../../models/download";
+import {connect} from "umi";
+import {CurrentUser} from "../user/data";
 
 
 
 
 
-const TableList: React.FC<{}> = () => {
+const TableList: React.FC<{}> = (props) => {
+
+  const  { currentUser }=props;
+
 
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
@@ -32,38 +34,55 @@ const TableList: React.FC<{}> = () => {
     {
       title: '操作人id',
       dataIndex: 'operatorId',
+      hideInSearch:currentUser.authority!=0,
+
     },
 
     {
       title: '操作人名称',
       dataIndex: 'operatorName',
+      hideInSearch:true,
     },
     {
       title: '操作类型',
       dataIndex: 'type',
+      valueEnum: {
+        0: { text: '默认任务', status: '默认任务' },
+        11: { text: '上传EXCEL', status: '上传EXCEL' },
+        12: { text: '录入EXCEL', status: '录入EXCEL' },
+        13: { text: '生成EXCEL', status: '生成EXCEL' },
+        14: { text: '计算任务', status: '计算任务' },
+
+      },
     },
     {
       title: '任务状态',
       dataIndex: 'status',
+      valueEnum: {
+        0: { text: '创建', status: '创建' },
+        1: { text: '执行中', status: '执行中' },
+        2: { text: '执行成功', status: '执行成功' },
+        9: { text: '执行失败', status: '执行失败' },
+      },
     },
     {
       title: '执行进度',
       dataIndex: 'progress',
-    },
-    {
-      title: '任务状态',
-      dataIndex: 'status',
+      hideInSearch:true,
+
     },
     {
       title: '创建时间',
       dataIndex: 'gmtCreate',
       valueType:'date',
+      hideInSearch:true,
 
     },
     {
       title: '更新时间',
       dataIndex: 'gmtModify',
       valueType:'date',
+      hideInSearch:true,
 
     },
     {
@@ -72,7 +91,7 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a href={downloadUrl+record.attributes.fileName} hidden={record.type!='生成EXCEL'||record.status!='执行成功'||
+          <a href={downloadUrl+record.attributes.fileName} hidden={record.type!=13||record.status!=2||
             new Date().getTime()-record.gmtCreate>=2160000000}>
             下载
           </a>
@@ -87,8 +106,11 @@ const TableList: React.FC<{}> = () => {
       <ProTable<TableListItem>
         headerTitle="系统任务"
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         request={(params) => {
+           if(currentUser.authority!=0){
+             params.operatorId=currentUser.id;
+           }
           return queryRule(params);
         }}
         columns={columns}
@@ -99,4 +121,14 @@ const TableList: React.FC<{}> = () => {
   );
 };
 
-export default TableList;
+export default connect(
+  ({
+     login,
+   }: {
+    login: {
+      currentUser: CurrentUser;
+    };
+  }) => ({
+    currentUser: login.currentUser,
+  }),
+)(TableList);

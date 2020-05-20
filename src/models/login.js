@@ -3,44 +3,50 @@ import { history } from 'umi';
 import { accountLogin,accountLogout,queryCurrent } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import {userCity, userId} from "./consts";
 
 const authorityMap = {
   0: 'admin',
   1: 'user',
+  2: 'user',
+  3: 'user',
 };
 const Model = {
   namespace: 'login',
   state: {
     currentUser:{},
+    status:[],
   },
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(accountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
-        payload: response.data,
+        payload: response,
       }); // Login successfully
-      sessionStorage.setItem("userId",response.data.id);
+      if(response.success){
+        sessionStorage.setItem(userId,response.data.id);
+        sessionStorage.setItem(userCity,response.data.city);
+        const urlParams = new URL(window.location.href);
+        const params = getPageQuery();
+        let { redirect } = params;
+        if (redirect) {
+          const redirectUrlParams = new URL(redirect);
 
-      const urlParams = new URL(window.location.href);
-      const params = getPageQuery();
-      let { redirect } = params;
-      if (redirect) {
-        const redirectUrlParams = new URL(redirect);
+          if (redirectUrlParams.origin === urlParams.origin) {
+            redirect = redirect.substr(urlParams.origin.length);
 
-        if (redirectUrlParams.origin === urlParams.origin) {
-          redirect = redirect.substr(urlParams.origin.length);
-
-          if (redirect.match(/^\/.*#/)) {
-            redirect = redirect.substr(redirect.indexOf('#') + 1);
+            if (redirect.match(/^\/.*#/)) {
+              redirect = redirect.substr(redirect.indexOf('#') + 1);
+            }
+          } else {
+            window.location.href = '/';
+            return;
           }
-        } else {
-          window.location.href = '/';
-          return;
         }
-      }
 
-      history.replace(redirect || '/');
+        history.replace(redirect || '/');
+      }
     },
 
     *queryCurrent( _,{ call, put }) {
@@ -57,24 +63,21 @@ const Model = {
       yield put({
         type: 'removeLoginStatus',
       });
-      const { redirect } = getPageQuery(); // Note: There may be security issues, please note
-      sessionStorage.removeItem("userId");
-
-      if (window.location.pathname !== '/user/login' && !redirect) {
+      sessionStorage.removeItem(userId);
+      if (window.location.pathname !== '/user/login') {
         history.replace({
           pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
         });
       }
     },
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      const authority=authorityMap[payload.authority];
+      const  loginStatus=payload.success?'ok':'error';
+      const authority=authorityMap[payload.data.authority];
+      console.log(authority);
       setAuthority(authority);
-      return { ...state, currentUser: payload};
+      return { ...state, currentUser: payload.data,status:loginStatus};
     },
 
     saveCurrentUser(state, { payload }){
@@ -84,7 +87,7 @@ const Model = {
 
     removeLoginStatus(state) {
       setAuthority(undefined);
-      return { ...state,currentUser:undefined};
+      return { ...state};
     },
   },
 };
