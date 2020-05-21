@@ -1,10 +1,12 @@
 import { DefaultFooter, getMenuData, getPageTitle } from '@ant-design/pro-layout';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Link, useIntl, connect } from 'umi';
+import {  useIntl, connect } from 'umi';
 import React from 'react';
 import SelectLang from '@/components/SelectLang';
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
+import {GithubOutlined} from "@ant-design/icons";
+
 
 const UserLayout = props => {
   const {
@@ -41,17 +43,30 @@ const UserLayout = props => {
         <div className={styles.content}>
           <div className={styles.top}>
             <div className={styles.header}>
-              <Link to="/">
-                <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
-              </Link>
+              <img alt="logo" className={styles.logo} src={logo} />
+              <span className={styles.title}>Electricity Data System</span>
             </div>
             <div className={styles.desc}>用电数据分析系统</div>
           </div>
           {children}
         </div>
-        <DefaultFooter />
-      </div>
+        <DefaultFooter
+          copyright="2020 dprCZD"
+          links={[
+            {
+              key: 'EDS',
+              title: '用电数据分析系统',
+              href: 'https://github.com/dprCZD/electricity-data-system',
+              blankTarget: true,
+            },
+            {
+              key: 'github',
+              title: <GithubOutlined />,
+              href: 'https://github.com/dprCZD/electricity-data-system',
+              blankTarget: true,
+            },
+          ]}
+        />      </div>
     </HelmetProvider>
   );
 };

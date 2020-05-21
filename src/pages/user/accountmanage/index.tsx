@@ -25,7 +25,10 @@ const authorityMap = {
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    await addAccount(fields);
+    const resp=await addAccount(fields);
+    if(!resp||!resp.success){
+      return false;
+    }
     hide();
     message.success('添加成功');
     return true;
@@ -43,9 +46,11 @@ const handleAdd = async (fields: FormValueType) => {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在更新');
   try {
-    await updateAccount(fields);
+    const resp=await updateAccount(fields);
     hide();
-
+    if(!resp||!resp.success){
+      return false;
+    }
     message.success('更新成功');
     return true;
   } catch (error) {

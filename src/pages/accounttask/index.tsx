@@ -51,7 +51,8 @@ const TableList: React.FC<{}> = (props) => {
         11: { text: '上传EXCEL', status: '上传EXCEL' },
         12: { text: '录入EXCEL', status: '录入EXCEL' },
         13: { text: '生成EXCEL', status: '生成EXCEL' },
-        14: { text: '计算任务', status: '计算任务' },
+        14: { text: '下载EXCEL', status: '下载EXCEL' },
+        15: { text: '计算任务', status: '计算任务' },
 
       },
     },
@@ -74,14 +75,14 @@ const TableList: React.FC<{}> = (props) => {
     {
       title: '创建时间',
       dataIndex: 'gmtCreate',
-      valueType:'date',
+      valueType:'dateTime',
       hideInSearch:true,
 
     },
     {
       title: '更新时间',
       dataIndex: 'gmtModify',
-      valueType:'date',
+      valueType:'dateTime',
       hideInSearch:true,
 
     },

@@ -18,7 +18,11 @@ class SecurityLayout extends React.Component {
       dispatch({
         type: 'login/queryCurrent',
       });
+      dispatch({
+        type: 'markConfig/markConfig',
+      });
     }
+
   }
   render() {
     const { isReady } = this.state;

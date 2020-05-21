@@ -69,17 +69,42 @@ export default defineConfig({
               component: './accounttask',
             },
             {
-              name: '局站基础信息',
+              name: '标杆信息',
               icon: 'smile',
-              path: '/basesite',
-              component: './basesite',
+              path: '/benchmark',
+              component: './benchmark',
             },
             {
-              name: '查询表格',
-              icon: 'smile',
-              path: '/electricityfee',
-              component: './electricityfee',
+              name: '数据维护',
+              icon:'smile',
+              routes:[
+                {
+                  name: '局站基础信息',
+                  icon: 'smile',
+                  path: '/basesite',
+                  component: './basesite',
+                },
+                {
+                  name: '电费电量信息',
+                  icon: 'smile',
+                  path: '/electricityfee',
+                  component: './electricityfee',
+                },
+                {
+                  name: '抄表信息',
+                  icon: 'smile',
+                  path: '/meterdata',
+                  component: './meterdata',
+                },
+                {
+                  name: '转供电合同信息',
+                  icon: 'smile',
+                  path: '/eleccontract',
+                  component: './eleccontract',
+                },
+              ]
             },
+
             {
               component: './404',
             },

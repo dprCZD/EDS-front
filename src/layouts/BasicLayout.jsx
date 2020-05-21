@@ -42,7 +42,7 @@ const defaultFooterDom = (
       {
         key: 'EDS',
         title: '用电数据分析系统',
-        href: 'https://pro.ant.design',
+        href: 'https://github.com/dprCZD/electricity-data-system',
         blankTarget: true,
       },
       {
