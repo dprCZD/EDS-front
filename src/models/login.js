@@ -20,6 +20,7 @@ const Model = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(accountLogin, payload);
+
       yield put({
         type: 'changeLoginStatus',
         payload: response,

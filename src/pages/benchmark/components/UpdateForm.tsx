@@ -42,74 +42,34 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     return (
       <>
         <FormItem
-          name="processId"
-          label="流程单号"
-          rules={[{ required: true, message: '请输入内容！' }]}
-        >
-          <Input placeholder="请输入" readOnly={true} />
-        </FormItem>
-        <FormItem
-          name="siteId"
+          name="bureauId"
           label="局站编码"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入" readOnly={true} />
         </FormItem>
         <FormItem
-          name="siteName"
+          name="bureauName"
           label="局站名称"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
-          <Input placeholder="请输入"    />
+          <Input placeholder="请输入"  readOnly={true}  />
         </FormItem>
         <FormItem
-          name="customerId"
-          label="客户编号"
-          rules={[{ required: true, message: '请输入内容！' }]}
+          name="dataId"
+          label="数据编码"
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="billingPeriod"
-          label="账期"
-          rules={[{ required: true,
-            message: '请输入数字！',
-            pattern: new RegExp(/^[1-9]\d*$/, "g"),
-          }]}
+          name="dataUsefull"
+          label="数据有效性"
         >
-          <Input placeholder="请输入"  />
+          <Input placeholder="0无效，1有效"  />
         </FormItem>
         <FormItem
-          name="meterId"
-          label="电表表号"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="homeCity"
-          label="归属地市"
-          rules={[{ required: true, message: '请输入内容！' }]}
-
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="homeDistrict"
-          label="归属区县"
-          rules={[{ required: true, message: '请输入内容！' }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="homeGrid"
-          label="归属网格"
-          rules={[{ required: true, message: '请输入内容！' }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="meterDataPeak"
-          label="表示数-峰"
+          name="systemMarkDl"
+          label="系统标杆电量"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -118,8 +78,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="meterDataValley"
-          label="表示数-谷"
+          name="systemMarkDf"
+          label="系统标杆电费"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -128,8 +88,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="meterDataNomal"
-          label="表示数-平"
+          name="invoiceMark"
+          label="发票标杆"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -138,20 +98,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="meterReader"
-          label="抄表人员"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="meterReadDate"
-          label="抄表日期"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="meterNumber"
-          label="总计表示数"
+          name="meterMark"
+          label="抄表标杆"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -160,32 +108,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="meterReadPeriod"
-          label="抄表周期"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="siteType"
-          label="局站类型"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="processCode"
-          label="流程编码"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="meterReadWay"
-          label="抄表方式"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="alternatingCurrentA"
-          label="交流电流A"
+          name="dcMark"
+          label="直流标杆"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -194,8 +118,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="alternatingCurrentB"
-          label="交流电流B"
+          name="acMark"
+          label="交流标杆"
           rules={[{
             message: '请输入数字！',
             pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
@@ -203,57 +127,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         >
           <Input placeholder="请输入"  />
         </FormItem>
-        <FormItem
-          name="alternatingCurrentC"
-          label="交流电流C"
-          rules={[{
-            message: '请输入数字！',
-            pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
-          }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="directCurrentTotal"
-          label="直流总电流"
-          rules={[{
-            message: '请输入数字！',
-            pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
-          }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="electricCurrentLiantong"
-          label="联通电流"
-          rules={[{
-            message: '请输入数字！',
-            pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
-          }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="electricCurrentYidong"
-          label="移动电流"
-          rules={[{
-            message: '请输入数字！',
-            pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
-          }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="electricCurrentDianxing"
-          label="电信电流"
-          rules={[{
-            message: '请输入数字！',
-            pattern: new RegExp(/^[+-]?(0|([1-9]\d*))(\.\d+)?$/, "g"),
-          }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-
       </>
     );
   };

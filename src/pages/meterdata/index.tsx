@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import { Button, Upload, Dropdown, Menu, message } from 'antd';
+import {Button, Upload, Dropdown, Menu, message, Tooltip} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -37,7 +37,7 @@ const handleGenerateExcel = async (params:TableListParams) => {
     if(!resp||!resp.success){
       return false;
     }
-    message.success('创建Excel生成任务成功，请到系统任务查看');
+    message.success("生成[抄表信息]Excel生成任务成功，请至系统任务下查看,任务ID："+resp.data.id);
     return  true;
   }catch (error) {
     return false;
@@ -189,6 +189,8 @@ const TableList: React.FC<{}> = (props) => {
       dataIndex: 'homeGrid',
       key:'homeGrid',
       width:100,
+      hideInSearch:currentUser.authority>=3,
+
 
 
     },
@@ -351,7 +353,9 @@ const TableList: React.FC<{}> = (props) => {
         actionRef={actionRef}
         rowKey="processId"
         toolBarRender={(action, { selectedRows }) => [
-          <Button icon={<PlusSquareOutlined />} type="primary" onClick={() => {
+          <Tooltip placement="top" title={"生成Excel会生成权限范围内的所有数据，请谨慎使用"}>
+          <Button danger icon={<PlusSquareOutlined />} type="primary" onClick={() => {
+
             let params:TableListParams={};
             if(currentUser.authority==1){
               params.homeCity=currentUser.city;
@@ -365,11 +369,15 @@ const TableList: React.FC<{}> = (props) => {
             return   handleGenerateExcel(params);
           }}>
             生成Excel
-          </Button>,
+          </Button>
+          </Tooltip>,
           <Upload {...uploadProps}>
-            <Button type="primary">
+            <Tooltip placement="top" title={"上传Excel会自动执行Excel数据的录入工作，相同的流程单号新数据会覆盖旧数据，请谨慎使用"}>
+
+            <Button danger type="primary">
               <CloudUploadOutlined />             上传Excel
             </Button>
+            </Tooltip>
           </Upload>,
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新建

@@ -1,35 +1,49 @@
-import { DownOutlined, PlusOutlined,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import { Button, Upload, Dropdown, Menu, message } from 'antd';
+import { DownOutlined, EditFilled ,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
+import {Button, Dropdown, Menu, message, Tooltip} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
-import CreateForm from './components/CreateForm';
+import CalculateCheckForm from './components/CalculateCheckForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import {TableListItem, TableListParams} from './data.d';
-import {queryMark, updateMark, caculateMark, removeMark, generateMark} from './service';
-import {uploadUrl} from "../../models/download";
+import {queryMark, updateMark, caculateMark, removeMark, generateMark, setMarkConfig} from './service';
 import {connect} from "umi";
 import {CurrentUser} from "../user/data";
+import UpdateConfigForm from "./components/UpdateConfigForm";
 
 /**
- * 添加节点
+ * 执行标杆计算任务
  * @param fields
  */
 const handleCalculate = async (fields: FormValueType) => {
-  const hide = message.loading('正在添加');
+  const hide = message.loading('正在生成计算任务');
   try {
     const resp=await caculateMark(fields);
     hide();
     if(!resp||!resp.success){
       return false;
     }
-    message.success('添加成功');
+    message.success("生成[标杆计算]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id);
     return true;
   } catch (error) {
     return false;
   }
 };
-
+const handleUpdateConfig = async (fields: FormValueType) => {
+  const hide = message.loading('正在修改标杆配置');
+  try {
+    console.log(fields);
+    const resp=await setMarkConfig(fields);
+    hide();
+    if(!resp||!resp.success){
+      return false;
+    }
+    message.success('修改标杆配置成功');
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 const handleGenerateExcel = async (params:TableListParams) => {
   try{
 
@@ -77,7 +91,7 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   if (!selectedRows) return true;
   try {
     await removeMark({
-      processIdList: selectedRows.map((row) => row.processId),
+      bureauIdList: selectedRows.map((row) => row.bureauId),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -94,7 +108,10 @@ const TableList: React.FC<{}> = (props) => {
   const  { currentUser }=props;
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [configModalVisible, handleConfigModalVisible] = useState<boolean>(false);
+
   const [stepFormValues, setStepFormValues] = useState({});
+
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
 
@@ -168,6 +185,7 @@ const TableList: React.FC<{}> = (props) => {
       title: '归属网格',
       dataIndex: 'homeGrid',
       key:'homeGrid',
+      hideInSearch:currentUser.authority>=3,
       hideInTable:true,
 
       width:100,
@@ -254,7 +272,9 @@ const TableList: React.FC<{}> = (props) => {
         actionRef={actionRef}
         rowKey="bureauId"
         toolBarRender={(action, { selectedRows }) => [
-          <Button icon={<PlusSquareOutlined />} type="primary" onClick={() => {
+          <Tooltip placement="top" title={"生成Excel会生成权限范围内的所有数据，请谨慎使用"}>
+
+          <Button danger icon={<PlusSquareOutlined />} type="primary" onClick={() => {
             let params:TableListParams={};
             if(currentUser.authority==1){
               params.homeCity=currentUser.city;
@@ -268,11 +288,12 @@ const TableList: React.FC<{}> = (props) => {
             return   handleGenerateExcel(params);
           }}>
             生成Excel
+          </Button>
+          </Tooltip>,
+          <Button type="primary" icon={<EditFilled />} onClick={() => handleConfigModalVisible(true)}>
+            修改标杆生成配置
           </Button>,
-            <Button type="primary">
-              <CloudUploadOutlined />             上传Excel
-            </Button>,
-          <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
+          <Button icon={<EditFilled />} type= "primary" onClick={() => handleModalVisible(true)}>
             标杆计算
           </Button>,
           selectedRows && selectedRows.length > 0 && (
@@ -313,7 +334,7 @@ const TableList: React.FC<{}> = (props) => {
         scroll={{ x: 800 }}
         rowSelection={{}}
       />
-      <CreateForm
+      <CalculateCheckForm
         onSubmit={async (value) => {
           const success = await handleCalculate(value);
           if (success) {
@@ -325,6 +346,19 @@ const TableList: React.FC<{}> = (props) => {
         }}
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
+      />
+      <UpdateConfigForm
+        onSubmit={async (value) => {
+          const success = await handleUpdateConfig(value);
+          if (success) {
+            handleConfigModalVisible(false);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+        onCancel={() => handleConfigModalVisible(false)}
+        modalVisible={configModalVisible}
       />
       {stepFormValues && Object.keys(stepFormValues).length ? (
         <UpdateForm

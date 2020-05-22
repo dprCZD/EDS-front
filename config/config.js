@@ -60,7 +60,6 @@ export default defineConfig({
               path: '/account/accountmanage',
               component: './user/accountmanage',
               authority: ['admin'],
-
             },
             {
               name: '系统任务',
@@ -75,9 +74,15 @@ export default defineConfig({
               component: './benchmark',
             },
             {
+              name: '数据分析',
+              icon: 'smile',
+              path: '/dataanalysis',
+              component: './dataanalysis',
+            },
+            {
               name: '数据维护',
-              icon:'smile',
-              routes:[
+              icon: 'smile',
+              routes: [
                 {
                   name: '局站基础信息',
                   icon: 'smile',
@@ -102,7 +107,8 @@ export default defineConfig({
                   path: '/eleccontract',
                   component: './eleccontract',
                 },
-              ]
+
+              ],
             },
 
             {

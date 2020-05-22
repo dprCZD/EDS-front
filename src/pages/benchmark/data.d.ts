@@ -40,3 +40,16 @@ export interface TableListParams {
   homeDistrict?: string;
   homeGrid?: string;
 }
+
+export interface MarkConfigItem {
+  markTime?: Date;
+  meterMarkFormula?: string;
+  dcMarkFormula?: string;
+  acMarkFormula?: string;
+  meterMarkFormulaValue?: number;
+  dcMarkFormulaValue?: number;
+  acMarkFormulaValue?: number;
+  outOfElecFee?:number;
+  priceMark?:number;
+
+}

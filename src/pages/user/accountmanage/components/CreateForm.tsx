@@ -1,11 +1,11 @@
 import React from 'react';
-import { Form, Input, Modal } from 'antd';
-
+import {Form, Input, Modal, Select} from 'antd';
+import md5 from "md5"
 const FormItem = Form.Item;
 
 interface CreateFormProps {
   modalVisible: boolean;
-  onSubmit: (fieldsValue: { desc: string }) => void;
+  onSubmit: (fieldsValue) => void;
   onCancel: () => void;
 }
 
@@ -15,239 +15,86 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
   const { modalVisible, onSubmit: handleAdd, onCancel } = props;
   const okHandle = async () => {
     const fieldsValue = await form.validateFields();
-    form.resetFields();
+    fieldsValue.password=md5(fieldsValue.password);
     handleAdd(fieldsValue);
   };
   return (
     <Modal
       destroyOnClose
-      title="新建规则"
+      title="新增用户"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => onCancel()}
     >
       <Form form={form}>
         <FormItem
-          name="bureauId"
-          label="局站编码"
+          name="name"
+          label="用户名称"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="bureauName"
-          label="局站名称"
+          name="phone"
+          label="手机号"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="clientId"
-          label="客户编号"
+          name="password"
+          label="密码"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="bureauStatus"
-          label="局站状态"
+          name="email"
+          label="邮箱"
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="bureauType"
-          label="局站类型"
+          name="city"
+          label="归属地市"
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="supplyType"
-          label="转供/直供"
+          name="district"
+          label="归属区县"
           rules={[{  message: '直接输入转供/直供！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
-          name="bureauRight"
-          label="局站产权性质"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="firstLevelNameOwn"
-          label="归属地市"
-          rules={[{ required: true, message: '请输入内容！' }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="secondLevelNameOwn"
-          label="归属区县"
-          rules={[{ required: true, message: '请输入内容！' }]}
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="threeLevelNameOwn"
+          name="grid"
           label="归属网格"
+        >
+          <Input placeholder="请输入"  />
+        </FormItem>
+        <FormItem
+          name="authority"
+          label="用户权限"
+          rules={[{ required: true, message: '请选择' }]}
+        >
+          <Select style={{ width: 120 }}>
+            <Option value={0}>管理员</Option>
+            <Option value={1}>地市权限用户</Option>
+            <Option value={2}>区县权限用户</Option>
+            <Option value={3}>网格权限用户</Option>
+          </Select>
+        </FormItem>
+        <FormItem
+          name="status"
+          label="用户状态"
           rules={[{ required: true, message: '请输入内容！' }]}
         >
-          <Input placeholder="请输入"  />
+          <Select style={{ width: 120 }}>
+            <Option value={1}>正常</Option>
+            <Option value={9}>禁用</Option>
+          </Select>
         </FormItem>
-        <FormItem
-          name="bureauAddr"
-          label="局站详细地址"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="benchmarkType"
-          label="对标类型(标杆)"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="benchmarkState"
-          label="节能及标杆选定情况(标杆)"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="powerKw"
-          label="交流额定功率"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="airPowerKw"
-          label="空调额定功率(KW)"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="stationEqu"
-          label="站内设备"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="zpNum"
-          label="载频数"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="zsNum"
-          label="载扇数"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="geographyJd"
-          label="经度(地理坐标)"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="geographyWd"
-          label="纬度(地理坐标)"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="areaPerson"
-          label="区域负责人"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="logicNum"
-          label="逻辑站数"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="bureauLevel"
-          label="局站等级"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="baseLevel"
-          label="基站等级"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="boardRoom"
-          label="局房总建筑面积"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="engineRoom"
-          label="机房已装机使用面积"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="buildingType"
-          label="建筑类型"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="bureauEreWay"
-          label="天馈架设方式"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="fixedLine"
-          label="固网专业"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="mobile2g"
-          label="移动专业2g"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="mobile3g"
-          label="移动专业3g"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="mobile4g"
-          label="移动专业4g"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="professWy"
-          label="转铁塔"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>
-        <FormItem
-          name="fiveLevelNameOwn"
-          label="归属包区人"
-        >
-          <Input placeholder="请输入"  />
-        </FormItem>        <FormItem
-        name="remark4"
-        label="电量标杆"
-      >
-        <Input placeholder="请输入"  />
-      </FormItem>        <FormItem
-        name="remark5"
-        label="电费标杆"
-      >
-        <Input placeholder="请输入"  />
-      </FormItem>
       </Form>
     </Modal>
   );

@@ -181,7 +181,7 @@ const TableList: React.FC<{}> = (props) => {
       <ProTable<CurrentUser>
         headerTitle="查询表格"
         actionRef={actionRef}
-        rowKey="bureauId"
+        rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleModalVisible(true)}>
             新增用户

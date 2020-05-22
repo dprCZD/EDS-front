@@ -1,9 +1,12 @@
 import request from '@/utils/request';
+import md5 from "md5";
 
 export async function accountLogin(params) {
+  const login=params;
+  login.password=md5(login.password);
   return request('/api/auth/login', {
     method: 'POST',
-    data: params,
+    data: login,
   });
 }
 

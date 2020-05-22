@@ -1,5 +1,5 @@
 import request from 'umi-request';
-import { TableListParams } from './data.d';
+import {MarkConfigItem, TableListParams} from './data.d';
 
 
 export async function queryMark(params?: TableListParams) {
@@ -20,6 +20,15 @@ export async function removeMark(params: { key: number[] }) {
 export async function caculateMark(params: TableListParams) {
   return request('/api/v1/benchMark/batchCalculate', {
     method: 'GET',
+    data: {
+      ...params,
+    },
+  });
+}
+
+export async function setMarkConfig(params: MarkConfigItem) {
+  return request('/api/v1/benchMark/config/set', {
+    method: 'POST',
     data: {
       ...params,
     },
