@@ -57,19 +57,23 @@ const CreateForm: React.FC<CreateFormProps> = (props) => {
         <FormItem
           name="city"
           label="归属地市"
+          rules={[{ required: true, message: '请输入内容！' }]}
+
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
           name="district"
           label="归属区县"
-          rules={[{  message: '直接输入转供/直供！' }]}
+          rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
           name="grid"
           label="归属网格"
+          rules={[{ required: true, message: '请输入内容！' }]}
+
         >
           <Input placeholder="请输入"  />
         </FormItem>

@@ -105,6 +105,9 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
 
 const TableList: React.FC<{}> = (props) => {
 
+
+
+
   const  { currentUser }=props;
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
@@ -277,22 +280,28 @@ const TableList: React.FC<{}> = (props) => {
           <Button danger icon={<PlusSquareOutlined />} type="primary" onClick={() => {
             let params:TableListParams={};
             if(currentUser.authority==1){
-              params.homeCity=currentUser.city;
+
+              params.firstLevelNameOwn=currentUser.city;
             }
             if(currentUser.authority==2){
-              params.homeDistrict=currentUser.district;
+              params.firstLevelNameOwn=currentUser.city;
+              params.secondLevelNameOwn=currentUser.district;
             }
             if(currentUser.authority==3){
-              params.homeGrid=currentUser.grid;
+              params.firstLevelNameOwn=currentUser.city;
+              params.secondLevelNameOwn=currentUser.district;
+              params.threeLevelNameOwn=currentUser.grid;
             }
             return   handleGenerateExcel(params);
           }}>
             生成Excel
           </Button>
           </Tooltip>,
+          <Tooltip placement="top" title={"修改配置成功后请刷新页面以获取最新数据。"}>
           <Button type="primary" icon={<EditFilled />} onClick={() => handleConfigModalVisible(true)}>
             修改标杆生成配置
-          </Button>,
+          </Button>
+          </Tooltip>,
           <Button icon={<EditFilled />} type= "primary" onClick={() => handleModalVisible(true)}>
             标杆计算
           </Button>,
@@ -320,13 +329,17 @@ const TableList: React.FC<{}> = (props) => {
         ]}
         request={(params) => {
           if(currentUser.authority==1){
-            params.homeCity=currentUser.city;
+
+            params.firstLevelNameOwn=currentUser.city;
           }
           if(currentUser.authority==2){
-            params.homeDistrict=currentUser.district;
+            params.firstLevelNameOwn=currentUser.city;
+            params.secondLevelNameOwn=currentUser.district;
           }
           if(currentUser.authority==3){
-            params.homeGrid=currentUser.grid;
+            params.firstLevelNameOwn=currentUser.city;
+            params.secondLevelNameOwn=currentUser.district;
+            params.threeLevelNameOwn=currentUser.grid;
           }
           return queryMark(params);
         }}

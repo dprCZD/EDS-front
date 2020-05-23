@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {Form, Button, Input, Modal, Cascader, Select} from 'antd';
+import md5 from "md5"
 
 import {CurrentUser} from "../../data";
 
@@ -35,6 +36,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const handleFinish = async () => {
     const fieldsValue = await form.validateFields();
     fieldsValue.id=formVals.id;
+    fieldsValue.password=md5(fieldsValue.pwd);
     handleUpdate(fieldsValue);
 
   };
@@ -71,19 +73,23 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         <FormItem
           name="city"
           label="归属地市"
+          rules={[{ required: true, message: '请输入内容！' }]}
+
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
           name="district"
           label="归属区县"
-          rules={[{  message: '直接输入转供/直供！' }]}
+          rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>
         <FormItem
           name="grid"
           label="归属网格"
+          rules={[{ required: true, message: '请输入内容！' }]}
+
         >
           <Input placeholder="请输入"  />
         </FormItem>
@@ -109,6 +115,13 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             <Option value={9}>禁用</Option>
           </Select>
         </FormItem>
+        <FormItem
+          name="pwd"
+          label="用户密码"
+          rules={[{ required: true, message: '请输入内容！' }]}
+        >
+          <Input placeholder="请输入"  />
+        </FormItem>
 
       </>
     );
@@ -130,7 +143,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       width={640}
       bodyStyle={{ padding: '32px 40px 48px' }}
       destroyOnClose
-      title="局站信息更新"
+      title="用户信息更新"
       visible={updateModalVisible}
       footer={renderFooter()}
       onCancel={() => handleUpdateModalVisible(false, values)}

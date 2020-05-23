@@ -11,6 +11,7 @@ export interface CurrentUser {
   phone: string;
   authority:number;
   status:number;
+  password:string;
 }
 export interface UserQueryParams {
   name: string;

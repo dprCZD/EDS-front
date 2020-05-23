@@ -9,11 +9,12 @@ class SecurityLayout extends React.Component {
   state = {
     isReady: false,
   };
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
       isReady: true,
     });
     const { dispatch } = this.props;
+
     if (dispatch) {
       dispatch({
         type: 'login/queryCurrent',

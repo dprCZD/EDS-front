@@ -389,9 +389,12 @@ const TableList: React.FC<{}> = (props) => {
               params.homeCity=currentUser.city;
             }
             if(currentUser.authority==2){
+              params.homeCity=currentUser.city;
               params.homeDistrict=currentUser.district;
             }
             if(currentUser.authority==3){
+              params.homeCity=currentUser.city;
+              params.homeDistrict=currentUser.district;
               params.homeGrid=currentUser.grid;
             }
             return   handleGenerateExcel(params);
@@ -436,9 +439,12 @@ const TableList: React.FC<{}> = (props) => {
             params.homeCity=currentUser.city;
           }
           if(currentUser.authority==2){
+            params.homeCity=currentUser.city;
             params.homeDistrict=currentUser.district;
           }
           if(currentUser.authority==3){
+            params.homeCity=currentUser.city;
+            params.homeDistrict=currentUser.district;
             params.homeGrid=currentUser.grid;
           }
           return queryContract(params);
