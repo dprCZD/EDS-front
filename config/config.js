@@ -72,6 +72,8 @@ export default defineConfig({
               icon: 'smile',
               path: '/benchmark',
               component: './benchmark',
+              authority: ['admin'],
+
             },
             {
               name: '数据分析',

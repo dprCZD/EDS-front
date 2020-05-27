@@ -30,7 +30,6 @@ const CalculateCheckForm: React.FC<CreateFormProps> = (props) => {
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => onCancel()}
-
     >
       <Form form={form}>
         <Form.Item

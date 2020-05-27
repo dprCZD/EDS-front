@@ -53,6 +53,8 @@ const TableList: React.FC<{}> = (props) => {
         13: { text: '生成EXCEL', status: '生成EXCEL' },
         14: { text: '下载EXCEL', status: '下载EXCEL' },
         15: { text: '计算任务', status: '计算任务' },
+        16: { text: '分析任务', status: '分析任务' },
+
 
       },
     },
@@ -92,7 +94,7 @@ const TableList: React.FC<{}> = (props) => {
       valueType: 'option',
       render: (_, record) => (
         <>
-          <a href={downloadUrl+record.attributes.fileName} hidden={record.type!=13||record.status!=2||
+          <a href={downloadUrl+record.attributes.fileName} hidden={(record.type!=13&&record.type!=16)||record.status!=2||
             new Date().getTime()-record.gmtCreate>=2160000000}>
             下载
           </a>

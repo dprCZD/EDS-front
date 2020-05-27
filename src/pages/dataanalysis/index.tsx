@@ -4,7 +4,12 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'umi';
 import styles from './style.less';
 import {CurrentUser} from "../user/data";
-import {generateElecAnalysisTask, generateContractAnalysisTask, generateGridAnalysisTask} from "./service"
+import {
+  generateElecAnalysisTask,
+  generateContractAnalysisTask,
+  generateGridMarkAnalysisTask,
+  generateFeeAnalysisTask, generateGridFeeAnalysisTask
+} from "./service"
 import {TableListParams} from "../eleccontract/data";
 import {generateContract} from "../eleccontract/service";
 
@@ -30,9 +35,11 @@ const Dataanalysis: FC<DataanalysisProps> = ({
   submitting,
   currentUser,
 }) => {
-  const [gridForm] = Form.useForm();
+  const [gridMarkForm] = Form.useForm();
   const [contractForm] = Form.useForm();
   const [elecForm] = Form.useForm();
+  const [feeForm]=Form.useForm();
+  const [gridFeeForm]=Form.useForm();
 
   const content = (
     <>
@@ -117,7 +124,7 @@ const Dataanalysis: FC<DataanalysisProps> = ({
 
   };
 
-  const onFinishGridAnalysis = async (values) => {
+  const onFinishGridMarkAnalysis = async (values) => {
     const params=values;
     const hide = message.loading('正在生成计算任务');
     if(currentUser.authority==1){
@@ -134,9 +141,65 @@ const Dataanalysis: FC<DataanalysisProps> = ({
     }
     params.analysisDate=new Date(params.analysisDate).toUTCString();
     try {
-      const resp = await generateGridAnalysisTask(params)
+      const resp = await generateGridMarkAnalysisTask(params)
       hide();
       message.success("生成[网格维度异常用电数据统计]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id+"");
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+
+  };
+
+  const onFinishFeeAnalysis = async (values) => {
+    const params=values;
+    const hide = message.loading('正在生成计算任务');
+    if(currentUser.authority==1){
+      params.homeCity=currentUser.city;
+    }
+    if(currentUser.authority==2){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+    }
+    if(currentUser.authority==3){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+      params.homeGrid=currentUser.grid;
+    }
+    params.analysisDate=new Date(params.analysisDate).toUTCString();
+    try {
+      const resp = await generateFeeAnalysisTask(params)
+      hide();
+      message.success("生成[电费分析]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id+"");
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+
+  };
+
+  const onFinishGridFeeAnalysis = async (values) => {
+    const params=values;
+    const hide = message.loading('正在生成计算任务');
+    if(currentUser.authority==1){
+      params.homeCity=currentUser.city;
+    }
+    if(currentUser.authority==2){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+    }
+    if(currentUser.authority==3){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+      params.homeGrid=currentUser.grid;
+    }
+    params.analysisDate=new Date(params.analysisDate).toUTCString();
+    try {
+      const resp = await generateGridFeeAnalysisTask(params)
+      hide();
+      message.success("生成[电费承保统计]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id+"");
       return true;
     } catch (error) {
       hide();
@@ -265,10 +328,10 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         </Form>
 
         <Form
-          form={gridForm}
+          form={gridMarkForm}
           layout="vertical"
           hideRequiredMark
-          onFinish={onFinishGridAnalysis}
+          onFinish={onFinishGridMarkAnalysis}
         >
           <Card title="网格维度异常用电数据统计" className={styles.card} bordered={false}>
             <Row gutter={16} align="middle">
@@ -318,7 +381,98 @@ const Dataanalysis: FC<DataanalysisProps> = ({
                 </Form.Item>
               </Col>
               <Col xl={{ span: 3, offset: 2 }} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
-                <Button type="primary" onClick={() => gridForm?.submit()} loading={submitting}>
+                <Button type="primary" onClick={() => gridMarkForm?.submit()} loading={submitting}>
+                  提交
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+        </Form>
+        <Form
+          form={feeForm}
+          layout="vertical"
+          hideRequiredMark
+          onFinish={onFinishFeeAnalysis}
+        >
+          <Card title="区县维度电费分析统计" className={styles.card} bordered={false}>
+            <Row gutter={16} align="middle">
+              <Col xl={{ span: 3}} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Form.Item
+                  name="analysisDate"
+                  label="分析时间"
+                  rules={[{ required: true, message: '请输入内容！' }]}
+                >
+                  <DatePicker picker="month"   />
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属地市"
+                  name="homeCity"
+                >
+                  <Input placeholder="地市，区县，网格均为空则全量分析数据" disabled={currentUser.authority>=1}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属区县"
+                  name="homeDistrict"
+                >
+                  <Input placeholder="区县，网格均为空则全量分析地市级数据" disabled={currentUser.authority>=2}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 2 }} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Button type="primary" onClick={() => feeForm?.submit()} loading={submitting}>
+                  提交
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+        </Form>
+
+        <Form
+          form={gridFeeForm}
+          layout="vertical"
+          hideRequiredMark
+          onFinish={onFinishGridFeeAnalysis}
+        >
+          <Card title="电费承包数据统计" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>
+            <Row gutter={16} align="middle">
+              <Col xl={{ span: 3}} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Form.Item
+                  name="analysisDate"
+                  label="分析时间"
+                  rules={[{ required: true, message: '请输入内容！' }]}
+                >
+                  <DatePicker picker="month"   />
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属地市"
+                  name="homeCity"
+                >
+                  <Input placeholder="地市，区县，网格均为空则全量分析数据" disabled={currentUser.authority>=1}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属区县"
+                  name="homeDistrict"
+                >
+                  <Input placeholder="区县，网格均为空则全量分析地市级数据" disabled={currentUser.authority>=2}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属网格"
+                  name="homeGrid"
+                >
+                  <Input placeholder="网格为空则全量分析区县级数据" disabled={currentUser.authority>=3}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 2 }} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Button type="primary" onClick={() => gridFeeForm?.submit()} loading={submitting}>
                   提交
                 </Button>
               </Col>
