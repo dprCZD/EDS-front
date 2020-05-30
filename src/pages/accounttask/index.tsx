@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import {  Divider,} from 'antd';
+import {Divider, Typography,} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -11,7 +11,16 @@ import {CurrentUser} from "../user/data";
 
 
 
+const {Paragraph}=Typography;
+const { Text } = Typography;
 
+const content = (
+  <>
+    <Paragraph>
+      所有的计算任务，分析任务，录入任务，上传下载任务，生成任务均可在这里查看。其中分析任务，生成任务完成后可下载Excel报告。
+    </Paragraph>
+  </>
+);
 
 const TableList: React.FC<{}> = (props) => {
 
@@ -105,7 +114,7 @@ const TableList: React.FC<{}> = (props) => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper content={content}>
       <ProTable<TableListItem>
         headerTitle="系统任务"
         actionRef={actionRef}

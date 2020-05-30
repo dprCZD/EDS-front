@@ -8,7 +8,7 @@ import {
   generateElecAnalysisTask,
   generateContractAnalysisTask,
   generateGridMarkAnalysisTask,
-  generateFeeAnalysisTask, generateGridFeeAnalysisTask
+  generateFeeAnalysisTask, generateGridFeeAnalysisTask, generateFeeBillAnalysisTask
 } from "./service"
 import {TableListParams} from "../eleccontract/data";
 import {generateContract} from "../eleccontract/service";
@@ -40,6 +40,8 @@ const Dataanalysis: FC<DataanalysisProps> = ({
   const [elecForm] = Form.useForm();
   const [feeForm]=Form.useForm();
   const [gridFeeForm]=Form.useForm();
+  const [feeAnaForm]=Form.useForm();
+
 
   const content = (
     <>
@@ -61,6 +63,33 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         发票标杆差异率（30%≤X≤50%)	发票标杆差异率（50%≤X)	交流标杆差异率（30%≤X≤50%)
         交流标杆差异率（50%≤X)	直流标杆差异率（30%≤X≤50%)	直流标杆差异率（50%≤X)
         抄表标杆差异率（30%≤X≤50%)	抄表标杆差异率（50%≤X)	备注
+        )
+      </Paragraph>
+      <Paragraph>
+        <Text strong>局站类型电费统计</Text>：按照区县及局站类型统计全年度的电费，并且计算同比环比。
+        输出格式：(归属地市	归属区县	局站类型	数据基准时间	月份电费	同比增长	环比增长	年总电费	年同比增长 )
+      </Paragraph>
+      <Paragraph>
+        <Text strong>电费承包统计</Text>：按照网格统计月度电费数据，并且计算同比环比。
+        输出格式：(归属地市	归属网格	数据基准时间	月份电费	同比增长	环比增长 )
+      </Paragraph>
+      <Paragraph>
+        <Text strong>电费承包统计</Text>：按照网格统计月度电费数据，并且计算同比环比。
+        输出格式：(归属地市	归属网格	数据基准时间	月份电费	同比增长	环比增长 )
+      </Paragraph>
+      <Paragraph>
+        <Text strong>电费数据总表生成</Text>：生成电费电量&局站&财务报账单的联合表。
+        输出格式：(局站编码	局站名称	客户号	局站详细地址	局站类型	是否转铁塔	归属地市	归属区县
+        归属网格	供电所名称	年账期	联通分摊比	1月电量	1月电费	1月局站总电费	1月局站总电量	2月电量	2月电费
+        2月局站总电费	2月局站总电量	3月电量	3月电费	3月局站总电费	3月局站总电量	4月电量	4月电费	4月局站总电费
+        4月局站总电量	5月电量	5月电费	5月局站总电费	5月局站总电量	6月电量	6月电费	6月局站总电费	6月局站总电量
+        7月电量	7月电费	7月局站总电费	7月局站总电量	8月电量	8月电费	8月局站总电费	8月局站总电量	9月电量	9月电费
+        9月局站总电费	9月局站总电量	10月电量	10月电费	10月局站总电费	10月局站总电量	11月电量	11月电费	11月局站总电费
+        11月局站总电量	12月电量	12月电费	12月局站总电费	12月局站总电量	本年累计电费	本年累计电量	本年累计局站总电费
+        本年累计局站总电量	局站状态	直供/转供
+        报账单编号0	制单人0	所属部门0	报账申请日期0	业务大类0	报账金额0	合同编号0	合同名称0	摘要0
+        报账单编号1	制单人1	所属部门1	报账申请日期1	业务大类1	报账金额1	合同编号1	合同名称1	摘要1
+        ......
         )
       </Paragraph>
       <Paragraph>
@@ -200,6 +229,34 @@ const Dataanalysis: FC<DataanalysisProps> = ({
       const resp = await generateGridFeeAnalysisTask(params)
       hide();
       message.success("生成[电费承保统计]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id+"");
+      return true;
+    } catch (error) {
+      hide();
+      return false;
+    }
+
+  };
+
+  const onFinishFeeBillAnalysis = async (values) => {
+    const params=values;
+    const hide = message.loading('正在生成计算任务');
+    if(currentUser.authority==1){
+      params.homeCity=currentUser.city;
+    }
+    if(currentUser.authority==2){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+    }
+    if(currentUser.authority==3){
+      params.homeCity=currentUser.city;
+      params.homeDistrict=currentUser.district;
+      params.homeGrid=currentUser.grid;
+    }
+    params.analysisDate=new Date(params.analysisDate).toUTCString();
+    try {
+      const resp = await generateFeeBillAnalysisTask(params)
+      hide();
+      message.success("生成[电费数据总表]计算任务成功，请至系统任务下查看,任务ID："+resp.data.id+"");
       return true;
     } catch (error) {
       hide();
@@ -394,7 +451,7 @@ const Dataanalysis: FC<DataanalysisProps> = ({
           hideRequiredMark
           onFinish={onFinishFeeAnalysis}
         >
-          <Card title="区县维度电费分析统计" className={styles.card} bordered={false}>
+          <Card title="局站类型电费统计" className={styles.card} bordered={false}>
             <Row gutter={16} align="middle">
               <Col xl={{ span: 3}} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
                 <Form.Item
@@ -436,7 +493,7 @@ const Dataanalysis: FC<DataanalysisProps> = ({
           hideRequiredMark
           onFinish={onFinishGridFeeAnalysis}
         >
-          <Card title="电费承包数据统计" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>
+          <Card title="电费承包统计" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>
             <Row gutter={16} align="middle">
               <Col xl={{ span: 3}} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
                 <Form.Item
@@ -473,6 +530,57 @@ const Dataanalysis: FC<DataanalysisProps> = ({
               </Col>
               <Col xl={{ span: 3, offset: 2 }} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
                 <Button type="primary" onClick={() => gridFeeForm?.submit()} loading={submitting}>
+                  提交
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+        </Form>
+        <Form
+          form={feeAnaForm}
+          layout="vertical"
+          hideRequiredMark
+          onFinish={onFinishFeeBillAnalysis}
+        >
+          <Card title="电费数据总表生成" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>
+            <Row gutter={16} align="middle">
+              <Col xl={{ span: 3}} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Form.Item
+                  name="year"
+                  label="年份"
+                  rules={[{
+                    pattern: new RegExp(/^[1-9]\d*$/, "g"),
+                  }]}
+                >
+                  <Input   placeholder="例如:2019" />
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属地市"
+                  name="homeCity"
+                >
+                  <Input placeholder="地市，区县，网格均为空则全量分析数据" disabled={currentUser.authority>=1}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属区县"
+                  name="homeDistrict"
+                >
+                  <Input placeholder="区县，网格均为空则全量分析地市级数据" disabled={currentUser.authority>=2}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 1 }} lg={{ span: 6 }} md={{ span: 12 }} sm={24}>
+                <Form.Item
+                  label="归属网格"
+                  name="homeGrid"
+                >
+                  <Input placeholder="网格为空则全量分析区县级数据" disabled={currentUser.authority>=3}/>
+                </Form.Item>
+              </Col>
+              <Col xl={{ span: 3, offset: 2 }} lg={{ span: 4 }} md={{ span: 8 }} sm={16}>
+                <Button type="primary" onClick={() => feeAnaForm?.submit()} loading={submitting}>
                   提交
                 </Button>
               </Col>

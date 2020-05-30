@@ -109,6 +109,12 @@ export default defineConfig({
                   path: '/eleccontract',
                   component: './eleccontract',
                 },
+                {
+                  name: '财务报账信息',
+                  icon: 'smile',
+                  path: '/bill',
+                  component: './bill',
+                },
 
               ],
             },

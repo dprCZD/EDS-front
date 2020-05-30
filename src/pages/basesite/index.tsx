@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import { Button, Upload, Dropdown, Menu, message,Tooltip } from 'antd';
+import {Button, Upload, Dropdown, Menu, message, Tooltip, Typography} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -105,6 +105,27 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
     return false;
   }
 };
+
+const {Paragraph}=Typography;
+const { Text } = Typography;
+
+const content = (
+  <>
+    <Paragraph>
+      由局站基础信息台账.xls录入。
+    </Paragraph>
+    <Paragraph>
+      <Text strong>Excel格式</Text>：(局站编码	局站名称	建站时间	电业客户号	有效租赁合同	有效电费合同	局站状态	局站类型	直供/转供
+        产权属性	归属地市	归属区县	归属网格 局站地址	对标类型	节能标杆	直流电流	交流额定功率	空调额定功率	站内设备	日均电量	载频数	载扇数
+        经度	纬度	逻辑站数	区域负责人	局站等级	基站等级	局方总面积	设备面积	建筑类型	架设方式	固网专业	移动专业2g	移动专业3g	移动专业4g
+        是否转铁塔公司	包区人	电量标杆	电费标杆 )
+    </Paragraph>
+    <Paragraph>
+      <Text strong>注意</Text>：表头要在Excel的第三行方可正常录入。表头名称要与格式中的名称对应，顺序可以颠倒。
+    </Paragraph>
+
+  </>
+);
 
 const TableList: React.FC<{}> = (props) => {
 
@@ -508,7 +529,7 @@ const TableList: React.FC<{}> = (props) => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper content={content}>
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}
@@ -537,7 +558,6 @@ const TableList: React.FC<{}> = (props) => {
           </Tooltip>,
           <Upload {...uploadProps}>
             <Tooltip placement="top" title={"上传Excel会自动执行Excel数据的录入工作，相同的局站编码新数据会覆盖旧数据，请谨慎使用"}>
-
             <Button danger type="primary">
               <CloudUploadOutlined />             上传Excel
             </Button>

@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import {Button, Upload, Dropdown, Menu, message, Tooltip} from 'antd';
+import {Button, Upload, Dropdown, Menu, message, Tooltip, Typography} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -105,6 +105,27 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
     return false;
   }
 };
+
+const {Paragraph}=Typography;
+const { Text } = Typography;
+
+const content = (
+  <>
+    <Paragraph>
+      由转供电合同台账.xls录入。
+    </Paragraph>
+    <Paragraph>
+      <Text strong>Excel格式</Text>：(局站编号	局站名称	合同编号	客户编号	供电单位名称	供电所名称	用电类型	市电/农电
+      电费单价	付费周期	电表表号	抄表周期	电表倍率	合同开始	合同结束	开户行	开户行名称	开户账号	经办人	经办人电话	对方经办人
+      对方经办人电话	归属地市	归属区县	归属网格	局站属性	电表操作人	电表安装时间	电表启用时间	电表停用时间	线路台区
+      电表箱位置	合同名称	包杆金额	合同单状态	局站类型 )
+    </Paragraph>
+    <Paragraph>
+      <Text strong>注意</Text>：表头要在Excel的第一行方可正常录入。表头名称要与格式中的名称对应，顺序可以颠倒。
+    </Paragraph>
+
+  </>
+);
 
 const TableList: React.FC<{}> = (props) => {
 
@@ -375,7 +396,7 @@ const TableList: React.FC<{}> = (props) => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper content={content}>
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}

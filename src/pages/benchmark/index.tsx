@@ -1,5 +1,5 @@
 import { DownOutlined, EditFilled ,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import {Button, Dropdown, Menu, message, Tooltip} from 'antd';
+import {Button, Dropdown, Menu, message, Tooltip, Typography} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -103,6 +103,17 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 
+
+const {Paragraph}=Typography;
+const { Text } = Typography;
+
+const content = (
+  <>
+    <Paragraph>
+      由局站基础信息录入时动态生成。仅管理员使用。生成时并不包含大部分标杆，需要执行计算任务计算标杆。
+    </Paragraph>
+  </>
+);
 const TableList: React.FC<{}> = (props) => {
 
 
@@ -269,7 +280,7 @@ const TableList: React.FC<{}> = (props) => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper content={content}>
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}

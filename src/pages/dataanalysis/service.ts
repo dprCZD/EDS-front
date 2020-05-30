@@ -31,4 +31,9 @@ export async function generateGridFeeAnalysisTask(params) {
     params,
   });
 }
+export async function generateFeeBillAnalysisTask(params) {
+  return request('/api/v1/analysis/fee/bill', {
+    params,
+  });
+}
 

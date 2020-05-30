@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined,CloudUploadOutlined,PlusSquareOutlined } from '@ant-design/icons';
-import {Button, Upload, Dropdown, Menu, message, Tooltip} from 'antd';
+import {Button, Upload, Dropdown, Menu, message, Tooltip, Typography} from 'antd';
 import React, { useState, useRef } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
@@ -106,6 +106,33 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
     return false;
   }
 };
+
+const {Paragraph}=Typography;
+const { Text } = Typography;
+
+const content = (
+  <>
+    <Paragraph>
+      由电费电量.xls录入。
+    </Paragraph>
+    <Paragraph>
+      <Text strong>Excel格式</Text>：(局站编码	局站名称	客户号	局站详细地址	直供/转供	局站类型	是否转铁塔	归属地市	归属区县
+      归属网格	供电所名称	年账期	联通分摊比	1月电费	1月电量	1月局站总电费	1月局站总电量	2月电费	2月电量	2月局站总电费
+      2月局站总电量	3月电费	3月电量	3月局站总电费	3月局站总电量	4月电费	4月电量	4月局站总电费	4月局站总电量
+      5月电费	5月电量	5月局站总电费	5月局站总电量	6月电费	6月电量	6月局站总电费	6月局站总电量	7月电费	7月电量
+      7月局站总电费	7月局站总电量	8月电费	8月电量	8月局站总电费	8月局站总电量	9月电费	9月电量	9月局站总电费
+      9月局站总电量	10月电费	10月电量	10月局站总电费	10月局站总电量	11月电费	11月电量	11月局站总电费	11月局站总电量
+      12月电费	12月电量	12月局站总电费	12月局站总电量	本年累计电费	本年累计电量	本年累计局站总电费	本年累计局站总电量
+      局站状态
+      )
+    </Paragraph>
+    <Paragraph>
+      <Text strong>注意</Text>：表头要在Excel的第一行方可正常录入。表头名称要与格式中的名称对应，顺序可以颠倒。
+    </Paragraph>
+
+  </>
+);
+
 
 const TableList: React.FC<{}> = (props) => {
 
@@ -634,7 +661,7 @@ const TableList: React.FC<{}> = (props) => {
   ];
 
   return (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper content={content}>
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}

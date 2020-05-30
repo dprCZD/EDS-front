@@ -6,7 +6,7 @@ import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 import {TableListItem, TableListParams} from './data.d';
-import {queryMeter, updateMeter, addMeter, removeMeter, generateMeter} from './service';
+import {queryBill, updateBill, addBill, removeBill, generateBill} from './service';
 import {uploadUrl} from "../../models/download";
 import {connect} from "umi";
 import {CurrentUser} from "../user/data";
@@ -18,7 +18,7 @@ import {CurrentUser} from "../user/data";
 const handleAdd = async (fields: FormValueType) => {
   const hide = message.loading('正在添加');
   try {
-    const resp=await addMeter(fields);
+    const resp=await addBill(fields);
     hide();
     if(!resp||!resp.success){
       return false;
@@ -33,11 +33,11 @@ const handleAdd = async (fields: FormValueType) => {
 const handleGenerateExcel = async (params:TableListParams) => {
   try{
 
-    const resp=await generateMeter(params);
+    const resp=await generateBill(params);
     if(!resp||!resp.success){
       return false;
     }
-    message.success("生成[抄表信息]Excel生成任务成功，请至系统任务下查看,任务ID："+resp.data.id);
+    message.success("生成[财务报账信息]Excel生成任务成功，请至系统任务下查看,任务ID："+resp.data.id);
     return  true;
   }catch (error) {
     return false;
@@ -49,7 +49,24 @@ const uploadProps = {
   name: 'file',
   action: uploadUrl,
   data:{
-    excelType:2,
+    excelType:11,
+  },
+  withCredentials:true,
+
+  onChange(info) {
+
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} 文件上传成功，文件录入已开始，请到系统任务下查看。`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} 文件上传失败！`);
+    }
+  },
+};
+const connectUploadProps = {
+  name: 'file',
+  action: uploadUrl,
+  data:{
+    excelType:12,
   },
   withCredentials:true,
 
@@ -70,7 +87,7 @@ const uploadProps = {
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在更新');
   try {
-    const resp=await updateMeter(fields);
+    const resp=await updateBill(fields);
     if(!resp||!resp.success){
       return false;
     }
@@ -93,8 +110,8 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
-    await removeMeter({
-      processIdList: selectedRows.map((row) => row.processId),
+    await removeBill({
+      idList: selectedRows.map((row) => row.id),
     });
     hide();
     message.success('删除成功，即将刷新');
@@ -106,18 +123,23 @@ const handleRemove = async (selectedRows: TableListItem[]) => {
   }
 };
 
+
 const {Paragraph}=Typography;
 const { Text } = Typography;
 
 const content = (
   <>
     <Paragraph>
-      由抄表信息.xls录入。
+      由财务报账.xls录入。用于生成数据总表进行财务筛查。需要录入关联表数据（财务报账-局站）才能进行分析页面的生成电费数据总表操作。
     </Paragraph>
     <Paragraph>
-      <Text strong>Excel格式</Text>：(账期	流程单号	局站编码	局站名称	客户号	电表表号	归属地市	归属区县	归属网格	表示数-峰
-      表示数-谷	表示数-平	抄表人员	抄表日期	表示数总计	抄表周期	局站类型	流程编码	抄表方式	交流电流A	交流电流B	交流电流C
-      直流总电流	联通电流	移动电流	电信电流 )
+      <Text strong>Excel格式（财务报账）</Text>：(报账单编号	制单人	所属部门	报账申请日期	报账模板	业务大类	报账金额	申请付款金额	币种
+      当前审批阶段	供应商名称	合同编号	合同名称	当前处理人	制单会计	附件张数	摘要	总账日期	报账类型	供应商类型
+      收方户名	收方账号	收方开户行
+      )
+    </Paragraph>
+    <Paragraph>
+      <Text strong>Excel格式（关联表）</Text>：(ACCT_MONTH BUREAU_ID REIBURSE_ID )
     </Paragraph>
     <Paragraph>
       <Text strong>注意</Text>：表头要在Excel的第一行方可正常录入。表头名称要与格式中的名称对应，顺序可以颠倒。
@@ -125,7 +147,6 @@ const content = (
 
   </>
 );
-
 const TableList: React.FC<{}> = (props) => {
 
   const  { currentUser }=props;
@@ -135,99 +156,55 @@ const TableList: React.FC<{}> = (props) => {
   const actionRef = useRef<ActionType>();
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '流程单号',
-      dataIndex: 'processId',
-      key: 'processId',
+      title: '报账单编号',
+      dataIndex: 'billId',
+      key: 'billId',
       fixed: 'left',
       width:100,
     },
     {
-      title: '局站编码',
-      dataIndex: 'siteId',
-      key: 'siteId',
-      fixed: 'left',
-      width:100,
-    },
-    {
-      title: '局站名称',
-      dataIndex: 'siteName',
-      key:'siteName',
+      title: '制单人',
+      dataIndex: 'creator',
+      key:'creator',
       width:100,
 
     },
     {
-      title: '账期',
-      dataIndex: 'billingPeriod',
-      key:'billingPeriod',
+      title: '所属部门',
+      dataIndex: 'department',
+      key:'department',
       width:100,
 
     },
     {
 
-      title: '创建时间',
-      dataIndex: 'gmtCreate',
-      key:'gmtCreate',
+      title: '报账申请日期',
+      dataIndex: 'billDate',
+      key:'billDate',
       hideInSearch:true,
       valueType:'date',
       width:100,
 
     },
     {
-      title: '客户编号',
-      dataIndex: 'customerId',
-      key:'customerId',
-      width:100,
-
-    },
-    {
-      title: '电表表号',
-      dataIndex: 'meterId',
-      key:'meterId',
-      width:100,
-
-    },
-    {
-      title: '归属地市',
-      dataIndex: 'homeCity',
-      key:'homeCity',
-      hideInSearch:currentUser.authority>=1,
-
-      width:100,
-
-
-    },
-    {
-      title: '归属区县',
-      dataIndex: 'homeDistrict',
-      key:'homeDistrict',
-      hideInSearch:currentUser.authority>=2,
-
-      width:100,
-    },
-    {
-      title: '归属网格',
-      dataIndex: 'homeGrid',
-      key:'homeGrid',
-      width:100,
-      hideInSearch:currentUser.authority>=3,
-
-
-
-    },
-
-    {
-      title: '表示数-峰',
-      dataIndex: 'meterDataPeak',
+      title: '报账模板',
+      dataIndex: 'template',
+      key:'template',
       width:100,
       hideInSearch:true,
 
-      key:'meterDataPeak',
+    },
+    {
+      title: '业务大类',
+      dataIndex: 'bizType',
+      key:'bizType',
+      width:100,
 
     },
     {
-      title: '表示数-谷',
-      dataIndex: 'meterDataValley',
-      key:'meterDataValley',
+      title: '报账金额',
+      dataIndex: 'billAmount',
+      key:'billAmount',
       hideInSearch:true,
 
       width:100,
@@ -235,114 +212,136 @@ const TableList: React.FC<{}> = (props) => {
 
     },
     {
-      title: '表示数-平',
-      dataIndex: 'meterDataNomal',
+      title: '申请付款金额',
+      dataIndex: 'applyAmount',
+      key:'applyAmount',
+      hideInSearch:true,
+
       width:100,
-      key:'meterDataNomal',
+    },
+    {
+      title: '币种',
+      dataIndex: 'currency',
+      key:'currency',
+      hideInSearch:true,
+
+      width:100,
+
+
+    },
+    {
+      title: '当前审批阶段',
+      dataIndex: 'approval',
+      key:'approval',
+      hideInSearch:true,
+
+      width:100,
+
+    },
+    {
+      title: '供应商名称',
+      dataIndex: 'supplierName',
+      key:'supplierName',
+      hideInSearch:true,
+
+      width:100,
+
+    },
+    {
+      title: '合同编号',
+      dataIndex: 'contractId',
+      key:'contractId',
+      hideInSearch:true,
+
+      width:100,
+
+    },
+
+    {
+      title: '合同名称',
+      dataIndex: 'contractName',
+      width:100,
+      hideInSearch:true,
+
+      key:'contractName',
+
+    },
+    {
+      title: '当前处理人',
+      dataIndex: 'operator',
+      key:'operator',
+      hideInSearch:true,
+
+      width:100,
+
+
+    },
+    {
+      title: '制单会计',
+      dataIndex: 'accountant',
+      width:100,
+      key:'accountant',
       hideInSearch:true,
 
     },
     {
-      title: '抄表人员',
-      dataIndex: 'meterReader',
+      title: '附件张数',
+      dataIndex: 'annexNum',
       width:100,
-      key:'meterReader',
+      key:'annexNum',
       hideInSearch:true,
 
     },
     {
-      title: '抄表日期',
-      dataIndex: 'meterReadDate',
-      key:'meterReadDate',
+      title: '报销ID',
+      dataIndex: 'reiburseId',
+      key:'reiburseId',
+      width:100,
+      hideInSearch:true,
+
+    },
+    {
+      title: '总账日期',
+      dataIndex: 'totalAccountDate',
+      width:100,
       valueType:'date',
+      key:'totalAccountDate',
+      hideInSearch:true,
+    },
+    {
+      title: '报账类型',
+      dataIndex: 'billType',
       width:100,
+      key:'billType',
+      hideInSearch:true,
+    },
+    {
+      title: '供应商类型',
+      dataIndex: 'supplierType',
+      width:100,
+      key:'supplierType',
+      hideInSearch:true,
+    },
+    {
+      title: '收方户名',
+      dataIndex: 'receiverName',
+      width:100,
+      key:'receiverName',
+      hideInSearch:true,
+    },
+    {
+      title: '收方账号',
+      dataIndex: 'receiverId',
+      width:100,
+      key:'receiverId',
       hideInSearch:true,
 
     },
     {
-      title: '总计表示数',
-      dataIndex: 'meterNumber',
+      title: '收方开户行',
+      dataIndex: 'receiverBank',
       width:100,
-      key:'meterNumber',
-      hideInSearch:true,
-    },
-    {
-      title: '抄表周期',
-      dataIndex: 'meterReadPeriod',
-      width:100,
-      key:'meterReadPeriod',
-      hideInSearch:true,
-    },
-    {
-      title: '局站类型',
-      dataIndex: 'siteType',
-      width:100,
-      key:'siteType',
-      hideInSearch:true,
-    },
-    {
-      title: '流程编码',
-      dataIndex: 'processCode',
-      width:100,
-      key:'processCode',
-      hideInSearch:true,
-    },
-
-    {
-      title: '抄表方式',
-      dataIndex: 'meterReadWay',
-      width:100,
-      key:'meterReadWay',
-      hideInSearch:true,
-    },
-    {
-      title: '交流电流A',
-      dataIndex: 'alternatingCurrentA',
-      width:100,
-      key:'alternatingCurrentA',
-      hideInSearch:true,
-    },
-    {
-      title: '交流电流B',
-      dataIndex: 'alternatingCurrentB',
-      width:100,
-      key:'alternatingCurrentB',
-      hideInSearch:true,
-    },
-    {
-      title: '交流电流C',
-      dataIndex: 'alternatingCurrentC',
-      width:100,
-      key:'alternatingCurrentC',
-      hideInSearch:true,
-    },
-
-    {
-      title: '直流总电流',
-      dataIndex: 'directCurrentTotal',
-      width:100,
-      key:'directCurrentTotal',
-      hideInSearch:true,
-    },
-    {
-      title: '联通电流',
-      dataIndex: 'electricCurrentLiantong',
-      width:100,
-      key:'electricCurrentLiantong',
-      hideInSearch:true,
-    },
-    {
-      title: '移动电流',
-      dataIndex: 'electricCurrentYidong',
-      width:100,
-      key:'electricCurrentYidong',
-      hideInSearch:true,
-    },
-    {
-      title: '电信电流',
-      dataIndex: 'electricCurrentDianxing',
-      width:100,
-      key:'electricCurrentDianxing',
+      key:'receiverBank',
       hideInSearch:true,
     },
 
@@ -350,6 +349,8 @@ const TableList: React.FC<{}> = (props) => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      width:100,
+
       fixed: 'right',
       render: (_, record) => (
         <>
@@ -371,11 +372,11 @@ const TableList: React.FC<{}> = (props) => {
       <ProTable<TableListItem>
         headerTitle="查询表格"
         actionRef={actionRef}
-        rowKey="processId"
+        rowKey="id"
         toolBarRender={(action, { selectedRows }) => [
           <Tooltip placement="top" title={"生成Excel会生成权限范围内的所有数据，请谨慎使用"}>
-          <Button danger icon={<PlusSquareOutlined />} type="primary" onClick={() => {
 
+          <Button danger icon={<PlusSquareOutlined />} type="primary" onClick={() => {
             let params:TableListParams={};
             if(currentUser.authority==1){
               params.homeCity=currentUser.city;
@@ -394,11 +395,17 @@ const TableList: React.FC<{}> = (props) => {
             生成Excel
           </Button>
           </Tooltip>,
+          <Upload {...connectUploadProps}>
+            <Tooltip placement="top" title={"上传Excel会自动执行Excel数据的录入工作，相同的合同单号新数据会覆盖旧数据，请谨慎使用"}>
+              <Button danger type="primary">
+                <CloudUploadOutlined />             上传财务报账-局站关联信息
+              </Button>
+            </Tooltip>
+          </Upload>,
           <Upload {...uploadProps}>
-            <Tooltip placement="top" title={"上传Excel会自动执行Excel数据的录入工作，相同的流程单号新数据会覆盖旧数据，请谨慎使用"}>
-
+            <Tooltip placement="top" title={"上传Excel会自动执行Excel数据的录入工作，相同的合同单号新数据会覆盖旧数据，请谨慎使用"}>
             <Button danger type="primary">
-              <CloudUploadOutlined />             上传Excel
+              <CloudUploadOutlined />             上传财务报账信息
             </Button>
             </Tooltip>
           </Upload>,
@@ -440,10 +447,10 @@ const TableList: React.FC<{}> = (props) => {
             params.homeDistrict=currentUser.district;
             params.homeGrid=currentUser.grid;
           }
-          return queryMeter(params);
+          return queryBill(params);
         }}
         columns={columns}
-        scroll={{ x: 5000 }}
+        scroll={{ x: 1500 }}
         rowSelection={{}}
       />
       <CreateForm
