@@ -271,7 +271,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={elecForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishElecAnalysis}
         >
         <Card title="用电异常数据分析" className={styles.card} bordered={false}>
@@ -346,7 +345,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={contractForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishContractAnalysis}
         >
           <Card title="转供电异常数据分析" className={styles.card} bordered={false}>
@@ -387,7 +385,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={gridMarkForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishGridMarkAnalysis}
         >
           <Card title="网格维度异常用电数据统计" className={styles.card} bordered={false}>
@@ -448,7 +445,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={feeForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishFeeAnalysis}
         >
           <Card title="局站类型电费统计" className={styles.card} bordered={false}>
@@ -490,7 +486,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={gridFeeForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishGridFeeAnalysis}
         >
           <Card title="电费承包统计" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>
@@ -539,7 +534,6 @@ const Dataanalysis: FC<DataanalysisProps> = ({
         <Form
           form={feeAnaForm}
           layout="vertical"
-          hideRequiredMark
           onFinish={onFinishFeeBillAnalysis}
         >
           <Card title="电费数据总表生成" className={styles.card} bordered={false} hidden={currentUser.authority>=3}>

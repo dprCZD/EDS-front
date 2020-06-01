@@ -36,7 +36,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const handleFinish = async () => {
     const fieldsValue = await form.validateFields();
     fieldsValue.id=formVals.id;
-    fieldsValue.password=md5(fieldsValue.pwd);
+    if(fieldsValue.pwd){
+      fieldsValue.password=md5(fieldsValue.pwd);
+    }
     handleUpdate(fieldsValue);
 
   };
@@ -118,7 +120,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         <FormItem
           name="pwd"
           label="用户密码"
-          rules={[{ required: true, message: '请输入内容！' }]}
         >
           <Input placeholder="请输入"  />
         </FormItem>

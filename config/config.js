@@ -114,6 +114,7 @@ export default defineConfig({
                   icon: 'smile',
                   path: '/bill',
                   component: './bill',
+                  authority: ['admin'],
                 },
 
               ],
@@ -143,7 +144,7 @@ export default defineConfig({
   ignoreMomentLocale: true,
   proxy: {
     '/api/': {
-      target: 'http://localhost:8080/',
+      target: 'http://222.161.192.140:8080/',
       changeOrigin: true,
     },
   },

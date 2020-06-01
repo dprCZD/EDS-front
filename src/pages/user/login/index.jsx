@@ -43,7 +43,7 @@ const Login = props => {
 
           <UserName
             name="username"
-            placeholder="用户名: admin or user"
+            placeholder="用户ID/手机号/用户名"
             rules={[
               {
                 required: true,
